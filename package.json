@@ -2,14 +2,14 @@
   "name": "elm-tuts",
   "version": "1.0.0",
   "description": "Elm tutorial",
-  "main": "index.js",
+  "main": "elm.js",
   "devDependencies": {
     "elm": "^0.18.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build":"elm make Main.elm --output elm.js",
-    "push":"git commit -a -m 'few more change' && git push origin master && git push heroku master"
+    "push":"git commit -a -m 'few more changes' && git push origin master && git push heroku master"
   },
   "repository": {
     "type": "git",
