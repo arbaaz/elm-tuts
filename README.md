@@ -6,3 +6,6 @@ Elm tutorial
 
 # Build 
 `elm make Main.elm --output elm.js`
+
+# Heroku Deploy
+`Heroku create`
