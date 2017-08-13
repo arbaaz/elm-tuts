@@ -7,24 +7,6 @@ import Http
 import Json.Decode as JD exposing (Decoder, at, field, int, list, map3, string)
 
 
-stylesheet : Html msg
-stylesheet =
-    let
-        tag =
-            "link"
-
-        attrs =
-            [ attribute "rel" "stylesheet"
-            , attribute "property" "stylesheet"
-            , attribute "href" "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
-            ]
-
-        children =
-            []
-    in
-    node tag attrs children
-
-
 type alias Response =
     { id : Int
     , joke : String
@@ -121,7 +103,7 @@ view model =
                 , renderJokes model
                 ]
     in
-    div [ id "outer" ] [ stylesheet, inner ]
+    div [ id "outer" ] [ inner ]
 
 
 subscriptions : Model -> Sub Msg

@@ -9062,24 +9062,6 @@ var _user$project$Main$renderJokes = function (jokes) {
 };
 var _user$project$Main$initModel = {ctor: '[]'};
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Main$stylesheet = function () {
-	var children = {ctor: '[]'};
-	var attrs = {
-		ctor: '::',
-		_0: A2(_elm_lang$html$Html_Attributes$attribute, 'rel', 'stylesheet'),
-		_1: {
-			ctor: '::',
-			_0: A2(_elm_lang$html$Html_Attributes$attribute, 'property', 'stylesheet'),
-			_1: {
-				ctor: '::',
-				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'href', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'),
-				_1: {ctor: '[]'}
-			}
-		}
-	};
-	var tag = 'link';
-	return A3(_elm_lang$html$Html$node, tag, attrs, children);
-}();
 var _user$project$Main$Response = F3(
 	function (a, b, c) {
 		return {id: a, joke: b, categories: c};
@@ -9146,12 +9128,8 @@ var _user$project$Main$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _user$project$Main$stylesheet,
-			_1: {
-				ctor: '::',
-				_0: inner,
-				_1: {ctor: '[]'}
-			}
+			_0: inner,
+			_1: {ctor: '[]'}
 		});
 };
 var _user$project$Main$Joke = function (a) {
