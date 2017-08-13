@@ -12,8 +12,5 @@
         "elm-lang/html": "2.0.0 <= v < 3.0.0",
         "elm-lang/http": "1.0.0 <= v < 2.0.0"
     },
-    "stylesheets": [
-        "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-    ],
     "elm-version": "0.18.0 <= v < 0.19.0"
 }
