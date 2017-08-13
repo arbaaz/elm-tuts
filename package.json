@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build":"elm make Main.elm --output elm.js",
-    "push":"git commit -m 'few more change' && git push heroku master"
+    "push":"git commit -a -m 'few more change' && git push heroku master"
   },
   "repository": {
     "type": "git",
