@@ -68,7 +68,7 @@ randomJoke : Cmd Msg
 randomJoke =
     let
         url =
-            "http://api.icndb.com/jokes/random/5"
+            "//api.icndb.com/jokes/random/5"
 
         request =
             Http.get url responseListDecorder

@@ -9158,7 +9158,7 @@ var _user$project$Main$Joke = function (a) {
 	return {ctor: 'Joke', _0: a};
 };
 var _user$project$Main$randomJoke = function () {
-	var url = 'http://api.icndb.com/jokes/random/5';
+	var url = '//api.icndb.com/jokes/random/5';
 	var request = A2(_elm_lang$http$Http$get, url, _user$project$Main$responseListDecorder);
 	var cmd = A2(_elm_lang$http$Http$send, _user$project$Main$Joke, request);
 	return cmd;
