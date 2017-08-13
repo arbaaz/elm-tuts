@@ -1,25 +1,24 @@
 module Main exposing (..)
 
+-- import Html.Events exposing (onClick)
+
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
 import Http
 import Json.Decode as JD exposing (Decoder, at, field, int, list, map3, string)
 
 
-type alias Response =
-    { id : Int
-    , joke : String
-    , categories : List String
+type alias Post =
+    { url : String
     }
 
 
-type alias ResponseList =
-    List Response
+type alias PostList =
+    List Post
 
 
 type alias Model =
-    ResponseList
+    PostList
 
 
 initModel : Model
@@ -29,64 +28,79 @@ initModel =
 
 init : ( Model, Cmd Msg )
 init =
-    ( initModel, Cmd.none )
+    ( initModel, fetchPosts )
 
 
-responseDecoder : Decoder Response
-responseDecoder =
-    JD.map3 Response
-        (field "id" int)
-        (field "joke" string)
-        (field "categories" (JD.list string))
+postDecoder : Decoder Post
+postDecoder =
+    JD.map Post
+        (field "url" string)
 
 
-responseListDecorder : Decoder (List Response)
-responseListDecorder =
-    JD.list responseDecoder
-        |> at [ "value" ]
+postsDecoder : Decoder PostList
+postsDecoder =
+    at [ "data", "children" ] <|
+        JD.list <|
+            at [ "data" ] postDecoder
 
 
-randomJoke : Cmd Msg
-randomJoke =
+
+-- json : String
+-- json =
+--     """
+-- {
+--   "kind": "Listing",
+--   "data": {
+--     "children": [
+--       {"data":{"url":"Hello"}},
+--       {"data":{"url": "world"}}
+--     ]
+--   }
+-- }
+-- """
+
+
+fetchPosts : Cmd Msg
+fetchPosts =
     let
         url =
-            "//api.icndb.com/jokes/random/5"
+            "//www.reddit.com/r/elm/.json?limit=20&count=20"
 
         request =
-            Http.get url responseListDecorder
+            Http.get url postsDecoder
 
         cmd =
-            Http.send Joke request
+            Http.send Posts request
     in
     cmd
 
 
 type Msg
-    = Joke (Result Http.Error ResponseList)
-    | NewJoke
+    = Posts (Result Http.Error PostList)
+    | FetchPosts
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Joke (Ok response) ->
-            ( response, Cmd.none )
+        Posts (Ok post) ->
+            ( post, Cmd.none )
 
-        Joke (Err err) ->
+        Posts (Err err) ->
             ( model, Cmd.none )
 
-        NewJoke ->
-            ( model, randomJoke )
+        FetchPosts ->
+            ( model, fetchPosts )
 
 
-renderJoke : Response -> Html Msg
-renderJoke joke =
-    li [ class "list-group-item" ] [ text joke.joke ]
+renderPost : Post -> Html Msg
+renderPost post =
+    li [ class "list-group-item" ] [ text (toString post) ]
 
 
-renderJokes : ResponseList -> Html Msg
-renderJokes jokes =
-    ul [ class "list-group" ] (List.map renderJoke jokes)
+renderPosts : Model -> Html Msg
+renderPosts posts =
+    ul [ class "list-group" ] (List.map renderPost posts)
 
 
 view : Model -> Html Msg
@@ -94,13 +108,14 @@ view model =
     let
         inner =
             div []
-                [ button
-                    [ onClick NewJoke
-                    , class "btn btn-primary"
-                    ]
-                    [ text "Fetch Jokes" ]
-                , br [] []
-                , renderJokes model
+                [ -- button
+                  --     [ onClick FetchPosts
+                  --     , class "btn btn-primary"
+                  --     ]
+                  --     [ text "Fetch Jokes" ]
+                  -- ,
+                  br [] []
+                , renderPosts model
                 ]
     in
     div [ id "outer" ] [ inner ]
