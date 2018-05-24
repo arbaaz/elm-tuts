@@ -9035,7 +9035,7 @@ var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
 var _user$project$Main$initModel = {
 	data: {ctor: '[]'},
-	query: 'marvel',
+	query: 'indianporn',
 	error: ''
 };
 var _user$project$Main$subscriptions = function (model) {
