@@ -9033,57 +9033,120 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
+var _user$project$Main$initModel = {
+	data: {ctor: '[]'},
+	query: 'elm',
+	error: ''
+};
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _user$project$Main$renderJoke = function (joke) {
+var _user$project$Main$renderPost = function (post) {
 	return A2(
-		_elm_lang$html$Html$li,
+		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('list-group-item'),
+			_0: _elm_lang$html$Html_Attributes$class('card'),
 			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text(joke.joke),
-			_1: {ctor: '[]'}
+			_0: A2(
+				_elm_lang$html$Html$img,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('card-img-top'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$src('http://place-hold.it/300x500'),
+						_1: {ctor: '[]'}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$a,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$href(post.url),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(post.title),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$span,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										_elm_lang$core$Basics$toString(post.ups)),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
 		});
 };
-var _user$project$Main$renderJokes = function (jokes) {
+var _user$project$Main$renderPosts = function (posts) {
 	return A2(
-		_elm_lang$html$Html$ul,
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _user$project$Main$renderPost, posts.data));
+};
+var _user$project$Main$Post = F3(
+	function (a, b, c) {
+		return {url: a, title: b, ups: c};
+	});
+var _user$project$Main$postDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_user$project$Main$Post,
+	A2(_elm_lang$core$Json_Decode$field, 'url', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'ups', _elm_lang$core$Json_Decode$int));
+var _user$project$Main$postsDecoder = function () {
+	var decoder = _elm_lang$core$Json_Decode$list(
+		A2(
+			_elm_lang$core$Json_Decode$at,
+			{
+				ctor: '::',
+				_0: 'data',
+				_1: {ctor: '[]'}
+			},
+			_user$project$Main$postDecoder));
+	return A2(
+		_elm_lang$core$Json_Decode$at,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('list-group'),
-			_1: {ctor: '[]'}
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'children',
+				_1: {ctor: '[]'}
+			}
 		},
-		A2(_elm_lang$core$List$map, _user$project$Main$renderJoke, jokes));
-};
-var _user$project$Main$initModel = {ctor: '[]'};
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Main$Response = F3(
+		decoder);
+}();
+var _user$project$Main$Model = F3(
 	function (a, b, c) {
-		return {id: a, joke: b, categories: c};
+		return {data: a, query: b, error: c};
 	});
-var _user$project$Main$responseDecoder = A4(
-	_elm_lang$core$Json_Decode$map3,
-	_user$project$Main$Response,
-	A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int),
-	A2(_elm_lang$core$Json_Decode$field, 'joke', _elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$field,
-		'categories',
-		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
-var _user$project$Main$responseListDecorder = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'value',
-		_1: {ctor: '[]'}
-	},
-	_elm_lang$core$Json_Decode$list(_user$project$Main$responseDecoder));
-var _user$project$Main$NewJoke = {ctor: 'NewJoke'};
+var _user$project$Main$RecordQuery = function (a) {
+	return {ctor: 'RecordQuery', _0: a};
+};
+var _user$project$Main$FetchPosts = {ctor: 'FetchPosts'};
 var _user$project$Main$view = function (model) {
 	var inner = A2(
 		_elm_lang$html$Html$div,
@@ -9091,31 +9154,42 @@ var _user$project$Main$view = function (model) {
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$button,
+				_elm_lang$html$Html$input,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$NewJoke),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('btn btn-primary'),
-						_1: {ctor: '[]'}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Fetch Jokes'),
+					_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$RecordQuery),
 					_1: {ctor: '[]'}
-				}),
+				},
+				{ctor: '[]'}),
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$br,
-					{ctor: '[]'},
-					{ctor: '[]'}),
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$FetchPosts),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('btn btn-primary'),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Fetch Reddit Links'),
+						_1: {ctor: '[]'}
+					}),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Main$renderJokes(model),
-					_1: {ctor: '[]'}
+					_0: A2(
+						_elm_lang$html$Html$br,
+						{ctor: '[]'},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Main$renderPosts(model),
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		});
@@ -9129,31 +9203,85 @@ var _user$project$Main$view = function (model) {
 		{
 			ctor: '::',
 			_0: inner,
-			_1: {ctor: '[]'}
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(model.error),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
 		});
 };
-var _user$project$Main$Joke = function (a) {
-	return {ctor: 'Joke', _0: a};
+var _user$project$Main$Posts = function (a) {
+	return {ctor: 'Posts', _0: a};
 };
-var _user$project$Main$randomJoke = function () {
-	var url = '//api.icndb.com/jokes/random/5';
-	var request = A2(_elm_lang$http$Http$get, url, _user$project$Main$responseListDecorder);
-	var cmd = A2(_elm_lang$http$Http$send, _user$project$Main$Joke, request);
+var _user$project$Main$fetchPosts = function (model) {
+	var url = A2(
+		_elm_lang$core$Basics_ops['++'],
+		'//www.reddit.com/r/',
+		A2(_elm_lang$core$Basics_ops['++'], model.query, '/hot.json?limit=100&count=100'));
+	var request = A2(_elm_lang$http$Http$get, url, _user$project$Main$postsDecoder);
+	var cmd = A2(_elm_lang$http$Http$send, _user$project$Main$Posts, request);
 	return cmd;
-}();
+};
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		if (_p0.ctor === 'Joke') {
-			if (_p0._0.ctor === 'Ok') {
-				return {ctor: '_Tuple2', _0: _p0._0._0, _1: _elm_lang$core$Platform_Cmd$none};
-			} else {
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			}
-		} else {
-			return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$randomJoke};
+		switch (_p0.ctor) {
+			case 'Posts':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								data: _elm_lang$core$List$reverse(
+									A2(
+										_elm_lang$core$List$sortBy,
+										function (_) {
+											return _.ups;
+										},
+										_p0._0._0))
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								error: _elm_lang$core$Basics$toString(_p0._0._0)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			case 'FetchPosts':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Main$fetchPosts(model)
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{query: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
+var _user$project$Main$init = {
+	ctor: '_Tuple2',
+	_0: _user$project$Main$initModel,
+	_1: _user$project$Main$fetchPosts(_user$project$Main$initModel)
+};
 var _user$project$Main$main = _elm_lang$html$Html$program(
 	{init: _user$project$Main$init, update: _user$project$Main$update, view: _user$project$Main$view, subscriptions: _user$project$Main$subscriptions})();
 

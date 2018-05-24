@@ -25,43 +25,18 @@ import Json.Decode as JD exposing (Decoder, at, field, int, list, map3, string)
 type alias Post =
     { url : String
     , title : String
+    , ups: Int
     }
-
-
-type alias Url =
-    { url : String
-    , width : Int
-    , height : Int
-    }
-
-
-urlDecoder : Decoder Url
-urlDecoder =
-    map3 Url
-        (at [ "url" ] string)
-        (at [ "width" ] int)
-        (at [ "width" ] int)
-
-
-type alias Source =
-    { source : Url
-    }
-
-
-type alias SourceList =
-    { images : List Source
-    }
-
 
 type alias PostList =
     List Post
 
-
 postDecoder : Decoder Post
 postDecoder =
-    JD.map2 Post
+    JD.map3 Post
         (field "url" string)
         (field "title" string)
+        (field "ups" int)
 
 
 postsDecoder : Decoder PostList
@@ -99,7 +74,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Posts (Ok post) ->
-            ( { model | data = post }, Cmd.none )
+            ( { model | data = (List.reverse (List.sortBy .ups post)) }, Cmd.none )
 
         Posts (Err err) ->
             ( { model | error = toString err }, Cmd.none )
@@ -113,14 +88,20 @@ update msg model =
 
 renderPost : Post -> Html Msg
 renderPost post =
-    li [ class "list-group-item" ]
-        [ a [ href post.url ] [ text post.title ]
+    div [ class "card" ]
+        [
+            img [class "card-img-top", src "http://place-hold.it/300x500"][],
+            div [] [
+                a [ href post.url ] [ text post.title ],
+                span [] [text (toString post.ups)]
+            ]
         ]
+
 
 
 renderPosts : Model -> Html Msg
 renderPosts posts =
-    ul [ class "list-group" ] (List.map renderPost posts.data)
+    div [  ] (List.map renderPost posts.data)
 
 
 view : Model -> Html Msg
