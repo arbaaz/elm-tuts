@@ -26,6 +26,12 @@ type alias Post =
     { url : String
     , title : String
     , ups: Int
+    , source: Maybe String
+    }
+
+
+type alias Preview =
+    { url:String
     }
 
 type alias PostList =
@@ -33,10 +39,11 @@ type alias PostList =
 
 postDecoder : Decoder Post
 postDecoder =
-    JD.map3 Post
+    JD.map4 Post
         (field "url" string)
         (field "title" string)
         (field "ups" int)
+        (JD.maybe (at ["preview", "images"] <| JD.index 0 <| at ["source", "url"] string))
 
 
 postsDecoder : Decoder PostList
@@ -74,7 +81,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Posts (Ok post) ->
-            ( { model | data = (List.reverse (List.sortBy .ups post)) }, Cmd.none )
+            ( { model | data = List.reverse (List.sortBy .ups post) }, Cmd.none )
 
         Posts (Err err) ->
             ( { model | error = toString err }, Cmd.none )
@@ -85,12 +92,15 @@ update msg model =
         RecordQuery query ->
             ( { model | query = query }, Cmd.none )
 
+hasPreview : Post -> String
+hasPreview post =
+     Maybe.withDefault "http://place-hold.it/300x500" post.source
 
 renderPost : Post -> Html Msg
 renderPost post =
     div [ class "card" ]
         [
-            img [class "card-img-top", src "http://place-hold.it/300x500"][],
+            img [class "card-img-top", src (hasPreview post)][],
             div [] [
                 a [ href post.url ] [ text post.title ],
                 span [] [text (toString post.ups)]
@@ -140,7 +150,7 @@ type alias Model =
 initModel : Model
 initModel =
     { data = []
-    , query = "elm"
+    , query = "marvel"
     , error = ""
     }
 

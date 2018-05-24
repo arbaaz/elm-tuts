@@ -9035,11 +9035,14 @@ var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
 var _user$project$Main$initModel = {
 	data: {ctor: '[]'},
-	query: 'elm',
+	query: 'marvel',
 	error: ''
 };
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$Main$hasPreview = function (post) {
+	return A2(_elm_lang$core$Maybe$withDefault, 'http://place-hold.it/300x500', post.source);
 };
 var _user$project$Main$renderPost = function (post) {
 	return A2(
@@ -9058,7 +9061,8 @@ var _user$project$Main$renderPost = function (post) {
 					_0: _elm_lang$html$Html_Attributes$class('card-img-top'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$src('http://place-hold.it/300x500'),
+						_0: _elm_lang$html$Html_Attributes$src(
+							_user$project$Main$hasPreview(post)),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -9106,16 +9110,43 @@ var _user$project$Main$renderPosts = function (posts) {
 		{ctor: '[]'},
 		A2(_elm_lang$core$List$map, _user$project$Main$renderPost, posts.data));
 };
-var _user$project$Main$Post = F3(
-	function (a, b, c) {
-		return {url: a, title: b, ups: c};
+var _user$project$Main$Post = F4(
+	function (a, b, c, d) {
+		return {url: a, title: b, ups: c, source: d};
 	});
-var _user$project$Main$postDecoder = A4(
-	_elm_lang$core$Json_Decode$map3,
+var _user$project$Main$postDecoder = A5(
+	_elm_lang$core$Json_Decode$map4,
 	_user$project$Main$Post,
 	A2(_elm_lang$core$Json_Decode$field, 'url', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'title', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'ups', _elm_lang$core$Json_Decode$int));
+	A2(_elm_lang$core$Json_Decode$field, 'ups', _elm_lang$core$Json_Decode$int),
+	_elm_lang$core$Json_Decode$maybe(
+		A2(
+			_elm_lang$core$Json_Decode$at,
+			{
+				ctor: '::',
+				_0: 'preview',
+				_1: {
+					ctor: '::',
+					_0: 'images',
+					_1: {ctor: '[]'}
+				}
+			},
+			A2(
+				_elm_lang$core$Json_Decode$index,
+				0,
+				A2(
+					_elm_lang$core$Json_Decode$at,
+					{
+						ctor: '::',
+						_0: 'source',
+						_1: {
+							ctor: '::',
+							_0: 'url',
+							_1: {ctor: '[]'}
+						}
+					},
+					_elm_lang$core$Json_Decode$string)))));
 var _user$project$Main$postsDecoder = function () {
 	var decoder = _elm_lang$core$Json_Decode$list(
 		A2(
@@ -9139,6 +9170,9 @@ var _user$project$Main$postsDecoder = function () {
 		},
 		decoder);
 }();
+var _user$project$Main$Preview = function (a) {
+	return {url: a};
+};
 var _user$project$Main$Model = F3(
 	function (a, b, c) {
 		return {data: a, query: b, error: c};
