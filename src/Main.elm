@@ -1,5 +1,6 @@
 module Main exposing (..)
 
+import Debug exposing (log)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
@@ -25,17 +26,19 @@ import Json.Decode as JD exposing (Decoder, at, field, int, list, map3, string)
 type alias Post =
     { url : String
     , title : String
-    , ups: Int
-    , source: Maybe String
+    , ups : Int
+    , source : Maybe String
     }
 
 
 type alias Preview =
-    { url:String
+    { url : String
     }
+
 
 type alias PostList =
     List Post
+
 
 postDecoder : Decoder Post
 postDecoder =
@@ -43,7 +46,7 @@ postDecoder =
         (field "url" string)
         (field "title" string)
         (field "ups" int)
-        (JD.maybe (at ["preview", "images"] <| JD.index 0 <| at ["source", "url"] string))
+        (JD.maybe (at [ "preview", "images" ] <| JD.index 0 <| at [ "source", "url" ] string))
 
 
 postsDecoder : Decoder PostList
@@ -92,31 +95,36 @@ update msg model =
         RecordQuery query ->
             ( { model | query = query }, Cmd.none )
 
+
 hasPreview : Post -> String
 hasPreview post =
-     Maybe.withDefault "http://place-hold.it/300x500" post.source
+    Maybe.withDefault "http://place-hold.it/300x500" post.source
+
 
 renderPost : Post -> Html Msg
 renderPost post =
     div [ class "card" ]
-        [
-            img [class "card-img-top", src (hasPreview post)][],
-            div [] [
-                a [ href post.url ] [ text post.title ],
-                span [] [text (toString post.ups)]
+        [ a [ href post.url ]
+            [ img [ class "card-img-top", src (hasPreview post) ] []
+            , div []
+                [ span []
+                    [ text post.title ]
+                ]
             ]
         ]
 
 
-
 renderPosts : Model -> Html Msg
 renderPosts posts =
-    div [  ] (List.map renderPost posts.data)
+    div [] (List.map renderPost posts.data)
 
 
 view : Model -> Html Msg
 view model =
     let
+        x =
+            Debug.log "Fucks"
+
         inner =
             div []
                 [ input [ onInput RecordQuery ] []
