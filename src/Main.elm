@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Debug exposing (log)
+import Debug exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
@@ -40,6 +40,12 @@ type alias PostList =
     List Post
 
 
+type alias X =
+    { after : String
+    , children : PostList
+    }
+
+
 postDecoder : Decoder Post
 postDecoder =
     JD.map4 Post
@@ -51,12 +57,13 @@ postDecoder =
 
 postsDecoder : Decoder PostList
 postsDecoder =
-    let
-        decoder =
-            at [ "data" ] postDecoder
-                |> JD.list
-    in
-    at [ "data", "children" ] decoder
+    at [ "data" ] postDecoder
+        |> JD.list
+
+
+dataDecoder : Decoder X
+dataDecoder =
+    at [ "data" ] <| JD.map2 X (field "after" string) (field "children" postsDecoder)
 
 
 fetchPosts : Model -> Cmd Msg
@@ -66,7 +73,7 @@ fetchPosts model =
             "//www.reddit.com/r/" ++ model.query ++ "/hot.json?limit=100&count=100"
 
         request =
-            Http.get url postsDecoder
+            Http.get url dataDecoder
 
         cmd =
             Http.send Posts request
@@ -75,7 +82,7 @@ fetchPosts model =
 
 
 type Msg
-    = Posts (Result Http.Error PostList)
+    = Posts (Result Http.Error X)
     | FetchPosts
     | RecordQuery String
 
@@ -83,8 +90,8 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Posts (Ok post) ->
-            ( { model | data = List.reverse (List.sortBy .ups post) }, Cmd.none )
+        Posts (Ok x) ->
+            ( { model | data = List.reverse (List.sortBy .ups x.children), after = x.after }, Cmd.none )
 
         Posts (Err err) ->
             ( { model | error = toString err }, Cmd.none )
@@ -122,9 +129,6 @@ renderPosts posts =
 view : Model -> Html Msg
 view model =
     let
-        x =
-            Debug.log "Fucks"
-
         inner =
             div []
                 [ input [ onInput RecordQuery ] []
@@ -152,6 +156,7 @@ type alias Model =
     { data : PostList
     , query : String
     , error : String
+    , after : String
     }
 
 
@@ -160,6 +165,7 @@ initModel =
     { data = []
     , query = "marvel"
     , error = ""
+    , after = ""
     }
 
 

@@ -8,8 +8,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "elm make --debug src/Main.elm --output dist/bundle.js",
     "build": "elm make src/Main.elm --output dist/bundle.js",
-    "push": "git commit -a -m 'few more changes' && git push origin master && git push heroku master"
+    "push":
+      "git commit -a -m 'few more changes' && git push origin master && git push heroku master"
   },
   "repository": {
     "type": "git",
